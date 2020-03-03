@@ -17,10 +17,10 @@
 <script>
     import { getOptions } from '../utils.js';
     import 'ol/ol.css';
-    // import {Map, View} from 'ol';
-    // import TileLayer from 'ol/layer/Tile';
-    // import OSM from 'ol/source/OSM';
-    // import {fromLonLat} from 'ol/proj';
+    import {Map, View} from 'ol';
+    import TileLayer from 'ol/layer/Tile';
+    import OSM from 'ol/source/OSM';
+    import {fromLonLat} from 'ol/proj';
     // import VectorLayer from 'ol/layer/Vector';
     // import VectorSource from 'ol/source/Vector';
     // import Feature from 'ol/Feature';
@@ -38,6 +38,22 @@
                 map: undefined
             }
         },
+        methods: {
+            initMap() {
+                this.map = new Map({
+                    target: 'map',
+                    layers: [
+                        new TileLayer({
+                            source: new OSM()
+                        })
+                    ],
+                    view: new View({
+                        center: fromLonLat([0, 0]),
+                        zoom: 0 // max: 28
+                    })
+                });
+            }
+        },
         created() {
             this.options = getOptions();
         }
@@ -45,8 +61,17 @@
 </script>
 
 <style scoped>
+    #header {
+        margin-bottom: 1em;
+    }
+
     #retrieve-btn {
         margin-left: 1em;
+    }
+
+    .map {
+        height: 500px;
+        width: 100%;
     }
 
 </style>
