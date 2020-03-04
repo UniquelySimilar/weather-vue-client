@@ -8,7 +8,7 @@
                     {{ option.text }}
                 </option>
             </select>
-            <button type="button" id="retrieve-btn">Retrieve/Refresh Map Data</button>
+            <button type="button" id="retrieve-btn" v-on:click="initMap">Retrieve/Refresh Map Data</button>
         </header>
         <div id="map"></div>
     </div>
@@ -27,7 +27,7 @@
     // import Point from 'ol/geom/Point';
     // import {Icon, Style} from 'ol/style';
     // import axios from 'axios';
-    // import IconImg from './marker.png';
+    // import IconImg from '../assets/marker.png';
 
     export default {
         name: "LocationWeatherMap",
@@ -40,6 +40,7 @@
         },
         methods: {
             initMap() {
+                console.log("called 'initMap()'");
                 this.map = new Map({
                     target: 'map',
                     layers: [
@@ -56,7 +57,7 @@
         },
         created() {
             this.options = getOptions();
-        }
+        },
     }
 </script>
 
@@ -69,7 +70,7 @@
         margin-left: 1em;
     }
 
-    .map {
+    #map {
         height: 500px;
         width: 100%;
     }
