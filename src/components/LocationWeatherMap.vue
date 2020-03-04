@@ -57,7 +57,7 @@
                 })
             },
             initMap(locationWeatherData) {
-                console.log(locationWeatherData);
+                //console.log(locationWeatherData);
                 if (this.map === null) {
                     this.map = new Map({
                         target: 'map',
@@ -100,6 +100,23 @@
                     })
                 });
                 this.map.addLayer(this.markerLayer);
+
+                // Bind click handler for proprietary OL MapBrowserPointerEvent
+                var that = this;
+                this.map.on('click', function(event) {
+                    console.log(event);
+                    let feature = that.map.forEachFeatureAtPixel(event.pixel, (feature) => { return feature; } );
+                    if (feature) {
+                        let featureProps = feature.getProperties();
+                        let message = "LONGITUDE: " + featureProps.lon + "\nLATITUDE: " + featureProps.lat;
+                        if (featureProps.weatherDescription !== undefined) {
+                            message += "\nDESCRIPTION: " + featureProps.weatherDescription;
+                        }
+                        message += "\nTEMPERATURE: " + featureProps.temp + " F" + "\nHUMIDITY: " + featureProps.humidity + "%" +
+                        "\nWIND SPEED: " + featureProps.windSpeed;
+                        alert(message);
+                    }
+                })
             },
         },
         created() {
