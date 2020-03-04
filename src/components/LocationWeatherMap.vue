@@ -27,7 +27,7 @@
     import IconImg from '../assets/marker.png';
     import 'ol/ol.css';
     import axios from 'axios';
-    import { getOptions } from '../utils.js';
+    import { getOptions } from '../weather-client-utils.js';
 
     export default {
         name: "LocationWeatherMap",
@@ -104,7 +104,7 @@
                 // Bind click handler for proprietary OL MapBrowserPointerEvent
                 var that = this;
                 this.map.on('click', function(event) {
-                    console.log(event);
+                    //console.log(event);
                     let feature = that.map.forEachFeatureAtPixel(event.pixel, (feature) => { return feature; } );
                     if (feature) {
                         let featureProps = feature.getProperties();
