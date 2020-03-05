@@ -10,7 +10,32 @@
             </select>
             <button type="button" id="retrieve-btn" v-on:click="retrieveDataRenderMap">Retrieve/Refresh Map Data</button>
         </header>
+
         <div id="map"></div>
+
+        <div id="location-weather-modal" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Location Weather Information</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label>LONGITUDE:</label><span>{{ locationWeather.longitude }}</span><br>
+                        <label>LATITUDE:</label><span>{{ locationWeather.latitude }}</span><br>
+                        <label>DESCRIPTION:</label><span>{{ locationWeather.description }}</span><br>
+                        <label>TEMPERATURE:</label><span>{{ locationWeather.temperature }} F</span><br>
+                        <label>HUMIDITY:</label><span>{{ locationWeather.humidity }}%</span><br>
+                        <label>WIND SPEED:</label><span>{{ locationWeather.windSpeed }} MPH</span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -27,7 +52,7 @@
     import IconImg from '../assets/marker.png';
     import 'ol/ol.css';
     import axios from 'axios';
-    import { getOptions } from '../weather-client-utils.js';
+    import { getOptions, $ } from '../weather-client-utils.js';
 
     export default {
         name: "LocationWeatherMap",
@@ -37,7 +62,15 @@
                 options: [],
                 map: null,
                 markerLayer: null,
-                iconStyle: null
+                iconStyle: null,
+                locationWeather: {
+                    longitude: "",
+                    latitude: "",
+                    description: "",
+                    temperature: "",
+                    humidity: "",
+                    windSpeed: ""
+                }
             }
         },
         methods: {
@@ -56,8 +89,8 @@
                     console.log(error);
                 })
             },
-            initMap(locationWeatherData) {
-                //console.log(locationWeatherData);
+            initMap(locationWeatherAry) {
+                //console.log(locationWeatherAry);
                 if (this.map === null) {
                     this.map = new Map({
                         target: 'map',
@@ -79,7 +112,7 @@
 
                 // Add location markers
                 let featuresAry = [];
-                locationWeatherData.forEach(element => {
+                locationWeatherAry.forEach(element => {
                     let pointAry = [element.coord.lon, element.coord.lat];
                     let feature = new Feature({
                         geometry: new Point(fromLonLat(pointAry)),
@@ -108,13 +141,13 @@
                     let feature = that.map.forEachFeatureAtPixel(event.pixel, (feature) => { return feature; } );
                     if (feature) {
                         let featureProps = feature.getProperties();
-                        let message = "LONGITUDE: " + featureProps.lon + "\nLATITUDE: " + featureProps.lat;
-                        if (featureProps.weatherDescription !== undefined) {
-                            message += "\nDESCRIPTION: " + featureProps.weatherDescription;
-                        }
-                        message += "\nTEMPERATURE: " + featureProps.temp + " F" + "\nHUMIDITY: " + featureProps.humidity + "%" +
-                        "\nWIND SPEED: " + featureProps.windSpeed;
-                        alert(message);
+                        that.locationWeather.longitude = featureProps.lon;
+                        that.locationWeather.latitude = featureProps.lat;
+                        that.locationWeather.description = featureProps.weatherDescription !== undefined ? featureProps.weatherDescription : "";
+                        that.locationWeather.temperature = featureProps.temp;
+                        that.locationWeather.humidity = featureProps.humidity;
+                        that.locationWeather.windSpeed = featureProps.windSpeed;
+                        $('#location-weather-modal').modal();
                     }
                 })
             },
@@ -143,6 +176,16 @@
     #map {
         height: 500px;
         width: 100%;
+    }
+
+    .modal-title {
+        font-weight: bold;
+    }
+
+    #location-weather-modal label {
+        font-weight: bold;
+        text-align: right;
+        margin-right: 1em;
     }
 
 </style>

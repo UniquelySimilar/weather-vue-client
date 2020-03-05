@@ -9,4 +9,6 @@ function getOptions() {
     return options;
 }
 
-export { getOptions };
+import $ from 'jquery';
+
+export { getOptions, $ };
